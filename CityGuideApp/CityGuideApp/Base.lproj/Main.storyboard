@@ -1,24 +1,194 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="tab-bar-controller">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Map view configurations" minToolsVersion="14.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
-        <scene sceneID="tne-QT-ifu">
+        <!--Tab Bar Controller-->
+        <scene sceneID="tab-bar-controller-scene">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <tabBarController id="tab-bar-controller" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="tab-bar">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    </tabBar>
+                    <viewControllers>
+                        <viewController id="city-vc" customClass="CityViewController" customModule="CityGuideApp" customModuleProvider="target">
+                            <view key="view" contentMode="scaleToFill" id="city-view">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2RC-ib-XfA">
+                                        <rect key="frame" x="0.0" y="199" width="393" height="496"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="393" id="CLD-0w-nOh"/>
+                                        </constraints>
+                                    </pickerView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tmO-O9-EvU">
+                                        <rect key="frame" x="175.66666666666666" y="158" width="42" height="21"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="42" id="xTd-51-ORC"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <viewLayoutGuide key="safeArea" id="city-safe-area"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="tmO-O9-EvU" firstAttribute="centerX" secondItem="2RC-ib-XfA" secondAttribute="centerX" id="FG4-uM-w2I"/>
+                                    <constraint firstItem="city-safe-area" firstAttribute="bottom" secondItem="2RC-ib-XfA" secondAttribute="bottom" constant="40" id="PuK-PJ-Ijq"/>
+                                    <constraint firstItem="tmO-O9-EvU" firstAttribute="centerX" secondItem="city-view" secondAttribute="centerX" id="dHo-P1-5X2"/>
+                                    <constraint firstItem="tmO-O9-EvU" firstAttribute="top" secondItem="city-safe-area" secondAttribute="top" constant="40" id="iov-01-MZC"/>
+                                    <constraint firstItem="2RC-ib-XfA" firstAttribute="top" secondItem="tmO-O9-EvU" secondAttribute="bottom" constant="20" id="vMN-VP-AU2"/>
+                                </constraints>
+                            </view>
+                            <tabBarItem key="tabBarItem" title="도시 선택" id="city-tab"/>
+                            <connections>
+                                <outlet property="cityDescriptionLabel" destination="tmO-O9-EvU" id="epW-Eg-1Xp"/>
+                                <outlet property="cityPickerView" destination="2RC-ib-XfA" id="0GL-L1-Qjp"/>
+                            </connections>
+                        </viewController>
+                        <viewController id="map-vc" customClass="MapViewController" customModule="CityGuideApp" customModuleProvider="target">
+                            <view key="view" contentMode="scaleToFill" id="map-view">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NID-Nb-UAv">
+                                        <rect key="frame" x="0.0" y="118" width="393" height="617"/>
+                                        <standardMapConfiguration key="preferredConfiguration"/>
+                                    </mapView>
+                                    <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="vMK-Wv-8Qy">
+                                        <rect key="frame" x="16" y="68" width="361" height="32"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <segments>
+                                            <segment title="전체"/>
+                                            <segment title="방문"/>
+                                            <segment title="미방문"/>
+                                        </segments>
+                                        <connections>
+                                            <action selector="filterChanged:" destination="map-vc" eventType="valueChanged" id="YxY-Ta-OoS"/>
+                                        </connections>
+                                    </segmentedControl>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qK9-ab-CkO">
+                                        <rect key="frame" x="304" y="129" width="73" height="35"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="내 위치"/>
+                                        <connections>
+                                            <action selector="moveToMyLocation:" destination="map-vc" eventType="touchUpInside" id="bF7-rn-5hs"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <viewLayoutGuide key="safeArea" id="map-safe-area"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="map-safe-area" firstAttribute="bottom" secondItem="NID-Nb-UAv" secondAttribute="bottom" id="Cbe-vF-kY8"/>
+                                    <constraint firstItem="map-safe-area" firstAttribute="trailing" secondItem="NID-Nb-UAv" secondAttribute="trailing" id="K7M-Dj-S2Q"/>
+                                    <constraint firstItem="NID-Nb-UAv" firstAttribute="leading" secondItem="map-safe-area" secondAttribute="leading" id="eLA-Hb-xQW"/>
+                                    <constraint firstItem="NID-Nb-UAv" firstAttribute="top" secondItem="map-safe-area" secondAttribute="top" id="nUT-AR-KZN"/>
+                                </constraints>
+                            </view>
+                            <tabBarItem key="tabBarItem" title="지도 보기" id="map-tab"/>
+                            <connections>
+                                <outlet property="filterSegmentedControl" destination="vMK-Wv-8Qy" id="xIZ-uW-fP4"/>
+                                <outlet property="mapView" destination="NID-Nb-UAv" id="EeS-gW-Q6K"/>
+                                <outlet property="myLocationButton" destination="qK9-ab-CkO" id="57E-1m-X2i"/>
+                            </connections>
+                        </viewController>
+                    </viewControllers>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tab-bar-first-responder" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="113.74045801526717" y="-27.464788732394368"/>
+        </scene>
+        <!--Place Detail View Controller-->
+        <scene sceneID="zCK-2f-d6j">
+            <objects>
+                <viewController storyboardIdentifier="PlaceDetailViewController" id="Jtq-N1-J7j" customClass="PlaceDetailViewController" customModule="CityGuideApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="SIK-HD-gPx">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="nameLabel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eIs-aU-5cs">
+                                <rect key="frame" x="236" y="125" width="84" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="typeLabel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lcR-5W-ZxF">
+                                <rect key="frame" x="64" y="125" width="76" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T52-bI-jKg">
+                                <rect key="frame" x="51" y="187" width="290" height="184"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bFW-VM-b5Z">
+                                <rect key="frame" x="292" y="379" width="49" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </switch>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="예: 관악구" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="i8T-0N-UAU">
+                                <rect key="frame" x="51" y="592" width="97" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="distanceLabel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NCy-Pl-jBU">
+                                <rect key="frame" x="51" y="661" width="107" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WIb-dn-j61">
+                                <rect key="frame" x="193" y="591" width="88" height="35"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="거리 계산"/>
+                                <connections>
+                                    <action selector="calculateDistance:" destination="Jtq-N1-J7j" eventType="touchUpInside" id="hdl-ab-j6L"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="descriptionLabel" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1oh-WS-LKf">
+                                <rect key="frame" x="51" y="418" width="290" height="135"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="h5j-Kb-ZXr"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <connections>
+                        <outlet property="descriptionLabel" destination="1oh-WS-LKf" id="vGp-qG-P4e"/>
+                        <outlet property="distanceLabel" destination="NCy-Pl-jBU" id="akz-xz-ufx"/>
+                        <outlet property="locationTextField" destination="i8T-0N-UAU" id="iNN-o3-kAc"/>
+                        <outlet property="nameLabel" destination="eIs-aU-5cs" id="cev-8W-PCn"/>
+                        <outlet property="placeImageView" destination="T52-bI-jKg" id="jvQ-7q-Mqg"/>
+                        <outlet property="typeLabel" destination="lcR-5W-ZxF" id="QRa-CH-fkg"/>
+                        <outlet property="visitSwitch" destination="bFW-VM-b5Z" id="IqB-kI-qWy"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rVP-Df-iCp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="904.58015267175574" y="-27.464788732394368"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>
