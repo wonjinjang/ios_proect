@@ -26,10 +26,10 @@ CityGuideApp은 사용자가 도시의 명소와 맛집을 쉽게 탐색할 수 
 <img src="https://github.com/user-attachments/assets/2ae46630-e1e6-43ed-9c94-c306d9efea40" width="300">
 
 - 메인 화면
-<img src="https://github.com/user-attachments/assets/aa781b6f-258c-4651-a867-b23c199c3c28" width="300">
+<img src="https://github.com/user-attachments/assets/aa781b6f-258c-4651-a867-b23c199c3c28" width="250">
 
 - 검색 화면
-<img src="https://github.com/user-attachments/assets/3b5c9d8f-4a2e-4b1c-9d8f-3b5c9d8f4a2e" width="300">
+
 
 - 지도 화면
 <img src="https://github.com/user-attachments/assets/7d8e9f0a-1b2c-3d4e-5f6a-7b8c9d0e1f2a" width="300">
