@@ -2,59 +2,65 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class MapViewController: UIViewController, MKMapViewDelegate {
+class MapViewController: UIViewController, MKMapViewDelegate, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var filterSegmentedControl: UISegmentedControl!
     @IBOutlet weak var myLocationButton: UIButton!
+    @IBOutlet weak var favoritesTableView: UITableView!
 
     let locationManager = CLLocationManager()
 
-    let cities = [
-        ("서울", 37.5665, 126.9780),
-        ("부산", 35.1796, 129.0756),
-        ("대구", 35.8722, 128.6025)
-    ]
-
-    struct Place {
+    struct Place: Codable {
+        let city: String
         let name: String
+        let type: String
         let latitude: Double
         let longitude: Double
-        let type: PlaceType
-        let imageName: String
         let description: String
-        enum PlaceType {
-            case attraction
-            case restaurant
-        }
+        let image: String
+        let address: String
+        let openTime: String
+        let siteURL: String
     }
 
-    let placesByCity: [[Place]] = [
-        [
-            Place(name: "N서울타워", latitude: 37.5512, longitude: 126.9882, type: .attraction, imageName: "nseoultower.jpg", description: "서울을 한눈에 볼 수 있는 대표 전망대."),
-            Place(name: "경복궁", latitude: 37.5796, longitude: 126.9770, type: .attraction, imageName: "gyeongbokgung.jpg", description: "조선시대의 대표 궁궐."),
-            Place(name: "진옥화할매닭발", latitude: 37.5702, longitude: 126.9910, type: .restaurant, imageName: "jinokhwa.jpg", description: "매운 닭발로 유명한 맛집.")
-        ],
-        [
-            Place(name: "해운대 해수욕장", latitude: 35.1587, longitude: 129.1604, type: .attraction, imageName: "haeundae.jpg", description: "부산의 대표 해변."),
-            Place(name: "광안대교", latitude: 35.1532, longitude: 129.1186, type: .attraction, imageName: "gwangan.jpg", description: "야경이 아름다운 대교."),
-            Place(name: "돼지국밥집", latitude: 35.1645, longitude: 129.0724, type: .restaurant, imageName: "porkgukbap.jpg", description: "부산의 명물 돼지국밥 맛집.")
-        ],
-        [
-            Place(name: "동성로", latitude: 35.8695, longitude: 128.5945, type: .attraction, imageName: "dongseongro.jpg", description: "대구의 번화가."),
-            Place(name: "이월드", latitude: 35.8532, longitude: 128.5668, type: .attraction, imageName: "eworld.jpg", description: "대구의 놀이공원."),
-            Place(name: "막창골목", latitude: 35.8700, longitude: 128.5940, type: .restaurant, imageName: "makchang.jpg", description: "막창으로 유명한 골목.")
-        ]
-    ]
+    var allPlaces: [Place] = []
+    var filteredPlaces: [Place] = []
+    var favoritePlaces: [Place] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
         mapView.showsUserLocation = true
         locationManager.requestWhenInUseAuthorization()
-        let coordinate = CLLocationCoordinate2D(latitude: cities[0].1, longitude: cities[0].2)
-        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 10000, longitudinalMeters: 10000)
-        mapView.setRegion(region, animated: false)
         filterSegmentedControl.selectedSegmentIndex = 0
+        favoritesTableView.dataSource = self
+        favoritesTableView.delegate = self
+        favoritesTableView.isHidden = true
+        loadPlacesFromJSON()
+        updateForSelectedDistrict()
+    }
+
+    func loadPlacesFromJSON() {
+        if let url = Bundle.main.url(forResource: "placeData", withExtension: "json"),
+           let data = try? Data(contentsOf: url) {
+            let decoder = JSONDecoder()
+            if let places = try? decoder.decode([Place].self, from: data) {
+                allPlaces = places
+            }
+        }
+    }
+
+    func updateForSelectedDistrict() {
+        let selectedIndex = UserDefaults.standard.integer(forKey: "SelectedDistrictIndex")
+        let districts = ["관악구", "강남구", "동작구", "금천구", "영등포구", "용산구", "성북구"]
+        let selectedDistrict = districts[selectedIndex]
+        filteredPlaces = allPlaces.filter { $0.city == "서울" && $0.address.contains(selectedDistrict) }
+        // 지도 중심을 해당 구의 첫 번째 장소로 이동
+        if let first = filteredPlaces.first {
+            let coord = CLLocationCoordinate2D(latitude: first.latitude, longitude: first.longitude)
+            let region = MKCoordinateRegion(center: coord, latitudinalMeters: 10000, longitudinalMeters: 10000)
+            mapView.setRegion(region, animated: false)
+        }
         updateAnnotations()
     }
 
@@ -64,11 +70,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             guard let self = self, let placemark = placemarks?.first, let coord = placemark.location?.coordinate else { return }
             let region = MKCoordinateRegion(center: coord, latitudinalMeters: 1000, longitudinalMeters: 1000)
             self.mapView.setRegion(region, animated: true)
-            // 기존 "내 위치" 마커 제거
             self.mapView.annotations
                 .filter { $0.title == "내 위치" }
                 .forEach { self.mapView.removeAnnotation($0) }
-            // 파란색 마커 추가
             let annotation = MKPointAnnotation()
             annotation.title = "내 위치"
             annotation.coordinate = coord
@@ -78,27 +82,56 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let selectedIndex = UserDefaults.standard.integer(forKey: "SelectedCityIndex")
-        let city = cities[selectedIndex]
-        let coordinate = CLLocationCoordinate2D(latitude: city.1, longitude: city.2)
-        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 10000, longitudinalMeters: 10000)
-        mapView.setRegion(region, animated: false)
-        updateAnnotations()
+        updateForSelectedDistrict()
     }
 
     @IBAction func filterChanged(_ sender: UISegmentedControl) {
+        if filterSegmentedControl.selectedSegmentIndex == 3 {
+            updateFavoritePlaces()
+            favoritesTableView.reloadData()
+            favoritesTableView.isHidden = false
+            mapView.isHidden = true
+        } else {
+            favoritesTableView.isHidden = true
+            mapView.isHidden = false
+            updateAnnotations()
+        }
+    }
+
+    func updateFavoritePlaces() {
+        favoritePlaces = filteredPlaces.filter { UserDefaults.standard.bool(forKey: "favorite_\($0.name)") }
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return favoritePlaces.count
+    }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "FavoriteCell", for: indexPath)
+        let place = favoritePlaces[indexPath.row]
+        cell.textLabel?.text = place.name
+        cell.detailTextLabel?.text = place.description
+        return cell
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let place = favoritePlaces[indexPath.row]
+        let coord = CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longitude)
+        let region = MKCoordinateRegion(center: coord, latitudinalMeters: 1000, longitudinalMeters: 1000)
+        mapView.setRegion(region, animated: true)
+        filterSegmentedControl.selectedSegmentIndex = 0
+        favoritesTableView.isHidden = true
+        mapView.isHidden = false
         updateAnnotations()
     }
 
     func updateAnnotations() {
-        let selectedIndex = UserDefaults.standard.integer(forKey: "SelectedCityIndex")
-        let places = placesByCity[selectedIndex]
-        let filter = filterSegmentedControl.selectedSegmentIndex // 0: 전체, 1: 방문, 2: 미방문
+        let filter = filterSegmentedControl.selectedSegmentIndex
         mapView.removeAnnotations(mapView.annotations)
-        for place in places {
+        for place in filteredPlaces {
             let visited = UserDefaults.standard.bool(forKey: "visited_\(place.name)")
+            let favorite = UserDefaults.standard.bool(forKey: "favorite_\(place.name)")
             if filter == 1 && !visited { continue }
             if filter == 2 && visited { continue }
+            if filter == 3 && !favorite { continue }
             let annotation = MKPointAnnotation()
             annotation.title = place.name
             annotation.coordinate = CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longitude)
@@ -106,26 +139,26 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
 
-    // 마커 클릭 시 상세 정보 화면으로 이동
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         guard let annotation = view.annotation else { return }
-        let selectedIndex = UserDefaults.standard.integer(forKey: "SelectedCityIndex")
-        let places = placesByCity[selectedIndex]
-        if let place = places.first(where: { $0.name == annotation.title }) {
+        if let place = filteredPlaces.first(where: { $0.name == annotation.title }) {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let detailVC = storyboard.instantiateViewController(withIdentifier:   "PlaceDetailViewController") as? PlaceDetailViewController {
                 detailVC.placeName = place.name
-                detailVC.placeType = (place.type == .attraction) ? "관광지" : "맛집"
-                detailVC.placeImageName = place.imageName
+                detailVC.placeType = place.type
+                detailVC.placeImageName = place.image
                 detailVC.placeDescription = place.description
                 detailVC.placeLatitude = place.latitude
                 detailVC.placeLongitude = place.longitude
+                detailVC.placeAddress = place.address
+                detailVC.placeOpenTime = place.openTime
+                detailVC.placeSiteURL = place.siteURL
+                detailVC.isVisited = UserDefaults.standard.bool(forKey: "visited_\(place.name)")
                 self.present(detailVC, animated: true, completion: nil)
             }
         }
     }
 
-    // 마커 색상 커스텀
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if annotation.title == "내 위치" {
             let identifier = "UserLocation"
@@ -148,14 +181,35 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         } else {
             annotationView?.annotation = annotation
         }
-        // 타입별 색상 지정
-        let selectedIndex = UserDefaults.standard.integer(forKey: "SelectedCityIndex")
-        let places = placesByCity[selectedIndex]
-        if let place = places.first(where: { $0.name == annotation.title }) {
-            annotationView?.pinTintColor = (place.type == .attraction) ? .systemBlue : .systemRed
+        if let place = filteredPlaces.first(where: { $0.name == annotation.title }) {
+            annotationView?.pinTintColor = (place.type == "관광지") ? .systemBlue : .systemRed
         } else {
             annotationView?.pinTintColor = .systemGray
         }
         return annotationView
+    }
+
+    func centerMapOnDistrict(_ district: String) {
+        // Example coordinates for districts (you can replace with actual coordinates)
+        let districtCoordinates: [String: CLLocationCoordinate2D] = [
+            "관악구": CLLocationCoordinate2D(latitude: 37.4802, longitude: 126.9527),
+            // Add more districts as needed
+        ]
+        if let coordinate = districtCoordinates[district] {
+            let region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+            mapView.setRegion(region, animated: true)
+        }
+    }
+
+    func centerMapOnPlace(_ placeName: String) {
+        if let place = allPlaces.first(where: { $0.name == placeName }) {
+            let coordinate = CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longitude)
+            let region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+            mapView.setRegion(region, animated: true)
+            // Simulate a tap on the annotation to show the detail view
+            if let annotation = mapView.annotations.first(where: { ($0 as? MKPointAnnotation)?.title == placeName }) {
+                mapView.selectAnnotation(annotation, animated: true)
+            }
+        }
     }
 }

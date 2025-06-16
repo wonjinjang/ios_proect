@@ -2,65 +2,98 @@ import UIKit
 import CoreLocation
 
 class PlaceDetailViewController: UIViewController {
+    // MARK: - Data
     var placeName: String?
     var placeType: String?
     var placeImageName: String?
     var placeDescription: String?
     var placeLatitude: Double?
     var placeLongitude: Double?
+    var placeAddress: String?
+    var placeOpenTime: String?
+    var placeSiteURL: String?
+    var isVisited: Bool = false
+    var isFavorite: Bool = false
+    // 내 위치를 관악구 관악드림타운(37.4802, 126.9527)으로 고정
+    let fixedUserLocation = CLLocation(latitude: 37.4802, longitude: 126.9527)
 
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var typeLabel: UILabel!
+    // MARK: - Outlets
     @IBOutlet weak var placeImageView: UIImageView!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var addressLabel: UILabel!
+    @IBOutlet weak var openTimeLabel: UILabel!
+    @IBOutlet weak var visitButton: UIButton!
+    @IBOutlet weak var favoriteButton: UIButton!
+    @IBOutlet weak var descriptionTitleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
-    @IBOutlet weak var visitSwitch: UISwitch!
-    @IBOutlet weak var locationTextField: UITextField!
+    @IBOutlet weak var distanceTitleLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
+    @IBOutlet weak var siteButton: UIButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
+    }
+
+    func setupUI() {
         nameLabel.text = placeName
-        typeLabel.text = placeType
+        addressLabel.text = placeAddress ?? "주소 정보 없음"
+        openTimeLabel.text = placeOpenTime ?? "정보 없음"
+        visitButton.setTitle(isVisited ? "O" : "X", for: .normal)
+        // 즐겨찾기 버튼: 비어있는 별(☆), 채워진 별(★, 노란색)
+        updateFavoriteButton()
+        descriptionTitleLabel.text = "Description"
         descriptionLabel.text = placeDescription
+        distanceTitleLabel.text = "내 위치로부터 거리:"
         if let imageName = placeImageName {
             placeImageView.image = UIImage(named: imageName)
         }
-        // 방문 체크 불러오기
-        if let name = placeName {
-            visitSwitch.isOn = UserDefaults.standard.bool(forKey: "visited_\(name)")
+        // 거리 계산: 내 위치(관악드림타운) 기준
+        if let lat = placeLatitude, let lon = placeLongitude {
+            let placeLoc = CLLocation(latitude: lat, longitude: lon)
+            let distance = fixedUserLocation.distance(from: placeLoc) / 1000.0
+            distanceLabel.text = String(format: "%.2f km", distance)
+        } else {
+            distanceLabel.text = "알 수 없음"
         }
-        visitSwitch.addTarget(self, action: #selector(visitSwitchChanged), for: .valueChanged)
+        siteButton.setTitle("사이트 방문하기", for: .normal)
     }
 
-    @objc func visitSwitchChanged() {
-        if let name = placeName {
-            UserDefaults.standard.set(visitSwitch.isOn, forKey: "visited_\(name)")
+    func updateFavoriteButton() {
+        if isFavorite {
+            // 채워진 노란 별 (SF Symbol: star.fill, tintColor: systemYellow)
+            favoriteButton.setImage(UIImage(systemName: "star.fill"), for: .normal)
+            favoriteButton.tintColor = .systemYellow
+        } else {
+            // 비어있는 별 (SF Symbol: star, tintColor: systemGray)
+            favoriteButton.setImage(UIImage(systemName: "star"), for: .normal)
+            favoriteButton.tintColor = .systemGray
         }
     }
 
-    @IBAction func calculateDistance(_ sender: Any) {
-        guard let userLocation = locationTextField.text, !userLocation.isEmpty,
-              let placeLat = placeLatitude, let placeLon = placeLongitude else {
-            distanceLabel.text = "위치를 입력하세요."
+    @IBAction func visitButtonTapped(_ sender: UIButton) {
+        isVisited.toggle()
+        visitButton.setTitle(isVisited ? "O" : "X", for: .normal)
+        if let name = placeName {
+            UserDefaults.standard.set(isVisited, forKey: "visited_\(name)")
+        }
+    }
+
+    @IBAction func favoriteButtonTapped(_ sender: UIButton) {
+        isFavorite.toggle()
+        updateFavoriteButton()
+        if let name = placeName {
+            UserDefaults.standard.set(isFavorite, forKey: "favorite_\(name)")
+        }
+    }
+
+    @IBAction func siteButtonTapped(_ sender: UIButton) {
+        guard let urlString = placeSiteURL, let url = URL(string: urlString), UIApplication.shared.canOpenURL(url) else {
+            let alert = UIAlertController(title: "오류", message: "유효하지 않은 사이트 주소입니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
             return
         }
-        // 주소 → 좌표 변환 (CLGeocoder)
-        let geocoder = CLGeocoder()
-        geocoder.geocodeAddressString(userLocation) { [weak self] placemarks, error in
-            guard let self = self else { return }
-            if let placemark = placemarks?.first, let userCoord = placemark.location?.coordinate {
-                let userLoc = CLLocation(latitude: userCoord.latitude, longitude: userCoord.longitude)
-                let placeLoc = CLLocation(latitude: placeLat, longitude: placeLon)
-                let distance = userLoc.distance(from: placeLoc) // meter
-                let km = distance / 1000.0
-                DispatchQueue.main.async {
-                    self.distanceLabel.text = String(format: "거리: %.2f km", km)
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.distanceLabel.text = "위치 변환 실패"
-                }
-            }
-        }
+        UIApplication.shared.open(url)
     }
 } 
