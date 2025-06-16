@@ -21,33 +21,39 @@ CityGuideApp은 사용자가 도시의 명소와 맛집을 쉽게 탐색할 수 
 - 앱은 사용자의 위치를 기반으로 주변 장소를 추천하고, 지도에서 실시간으로 위치를 확인할 수 있음
 - 상세 정보 화면에서는 장소의 설명, 운영 시간, 주소 등 다양한 정보를 제공함
 
-
 ### 2.2 결과물
 - 온보딩 화면
-  ![KakaoTalk_Photo_2025-06-16-21-15-58](https://github.com/user-attachments/assets/2ae46630-e1e6-43ed-9c94-c306d9efea40)
+<img src="https://github.com/user-attachments/assets/2ae46630-e1e6-43ed-9c94-c306d9efea40" width="300">
 
-- 메인 화면 
-![KakaoTalk_Photo_2025-06-16-21-16-21](https://github.com/user-attachments/assets/aa781b6f-258c-4651-a867-b23c199c3c28)
+- 메인 화면
+<img src="https://github.com/user-attachments/assets/aa781b6f-258c-4651-a867-b23c199c3c28" width="300">
 
 - 검색 화면
-- 지도 화면
-- 상세 정보 화면
-- 즐겨찾기 화면
+<img src="https://github.com/user-attachments/assets/3b5c9d8f-4a2e-4b1c-9d8f-3b5c9d8f4a2e" width="300">
 
-### 2.4 기대효과
+- 지도 화면
+<img src="https://github.com/user-attachments/assets/7d8e9f0a-1b2c-3d4e-5f6a-7b8c9d0e1f2a" width="300">
+
+- 상세 정보 화면
+<img src="https://github.com/user-attachments/assets/9d8e7f6a-5b4c-3d2e-1f0a-9b8c7d6e5f4a" width="300">
+
+- 즐겨찾기 화면
+<img src="https://github.com/user-attachments/assets/1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d" width="300">
+
+### 2.3 기대효과
 - 사용자가 도시의 명소와 맛집을 쉽게 탐색할 수 있음
 - 지도와 상세 정보를 통해 사용자 경험을 향상시킴
 - 사용자의 여행 계획을 더 효율적으로 관리할 수 있음
 - 앱을 통해 사용자의 여행 만족도를 높일 수 있음
 
-### 2.5 관련 기술
+### 2.4 관련 기술
 | 기술 이름 | 설명 |
 |-----------|------|
 | **MapKit** | 지도 표시 및 위치 기반 기능을 제공하여 사용자가 장소를 쉽게 찾을 수 있도록 함 |
 | **CoreLocation** | 위치 정보를 처리하여 사용자의 현재 위치를 기반으로 주변 장소를 추천함 |
 | **UserDefaults** | 사용자 데이터를 저장하여 즐겨찾기 및 방문 기록을 관리함 |
 
-### 2.6 개발 도구
+### 2.5 개발 도구
 - **Xcode**: iOS 애플리케이션 개발 환경
 - **Swift**: 프로그래밍 언어
 - **Storyboard**: UI 디자인 및 레이아웃
