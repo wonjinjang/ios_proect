@@ -25,8 +25,12 @@ CityGuideApp은 사용자가 도시의 명소와 맛집을 쉽게 탐색할 수 
 - 온보딩 화면
 <img src="https://github.com/user-attachments/assets/2ae46630-e1e6-43ed-9c94-c306d9efea40" width="270">
 
+
+
 - 메인 화면
 <img src="https://github.com/user-attachments/assets/aa781b6f-258c-4651-a867-b23c199c3c28" width="270">
+
+
 
 - 지도 화면
 <table><tr>
@@ -35,14 +39,22 @@ CityGuideApp은 사용자가 도시의 명소와 맛집을 쉽게 탐색할 수 
 <td><img src="https://github.com/user-attachments/assets/39b109e0-3d15-4428-831d-b7cc9eecc180" width="270"></td>
 </tr></table>
 
+
+
 - 상세 정보 화면
 <img src="https://github.com/user-attachments/assets/bfb02b77-3eb0-4b57-971a-5a189bdf299a" width="270">
+
+
 
 - 사이트 방문하기 클릭 시 화면
 <img src="https://github.com/user-attachments/assets/196fbda4-246a-4ea5-a860-d2f652cae266" width="270">
 
+
+
 - 즐겨찾기 화면
 <img src="https://github.com/user-attachments/assets/ebd132a5-be3f-47c8-a2a0-090639eed32d" width="270">
+
+
 
 ### 2.3 기대효과
 - 사용자가 도시의 명소와 맛집을 쉽게 탐색할 수 있음
