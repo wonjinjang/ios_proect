@@ -68,7 +68,7 @@ CityNote는 사용자가 도시의 명소와 맛집을 쉽게 탐색할 수 있�
 - **Swift**: 프로그래밍 언어
 - **Storyboard**: UI 디자인 및 레이아웃
 
-### 2.6 발표 영상
+### 2.6 발표 영상 (녹화한 영상의 비율때문에 쇼츠 영상으로 나오게 됩니다.)
 [![TripNote](https://github.com/user-attachments/assets/0e0ee1d2-874f-4437-a62b-2c9c2aaf3523)](https://youtube.com/shorts/vACOXSv5cpI)
 
 
